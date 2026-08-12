@@ -1,0 +1,25 @@
+{
+  "name": "bhunes-sku-scraper",
+  "version": "1.0.0",
+  "description": "Search bhunes.com by SKU and get the clean product page URL",
+  "main": "scraper.js",
+  "scripts": {
+    "search": "node scraper.js",
+    "batch": "node batch.js",
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.19.0",
+    "boxen": "^5.1.2",
+    "chalk": "^4.1.2",
+    "cheerio": "^1.2.0",
+    "cli-progress": "^3.12.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "open": "^11.0.0"
+  }
+}

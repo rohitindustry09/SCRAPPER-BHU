@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Batch Results · Bhunes SKU Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+<link href="/css/theme.css" rel="stylesheet">
+</head>
+<body data-page="batch">
+
+<nav class="navbar navbar-expand-lg navbar-robotik sticky-top py-3">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <span class="brand-mark"><i class="bi bi-cpu"></i></span>
+      <span>Bhunes SKU Console<small>Storefront Intelligence</small></span>
+    </a>
+    <button class="navbar-toggler border-0 text-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <i class="bi bi-list fs-3"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="home" href="/"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="single" href="/single-lookup.html"><i class="bi bi-search"></i>Single Lookup</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="batch" href="/batch-check.html"><i class="bi bi-stack"></i>Batch Check</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="scrape" href="/scrape-store.html"><i class="bi bi-globe2"></i>Scrape Store</a></li>
+        <li class="nav-item ms-lg-3">
+          <span class="status-chip"><span class="status-dot pending" id="statusDot"></span><span id="statusLabel">Checking API…</span></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-5">
+
+  <nav class="breadcrumb-robotik"><a href="/">Dashboard</a><i class="bi bi-chevron-right"></i><a href="/batch-check.html" id="breadcrumbParentLink">Batch Check</a><i class="bi bi-chevron-right"></i><span class="text-dim">Results</span></nav>
+
+  <!-- Populated view -->
+  <div id="resultsView" class="d-none">
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
+      <div>
+        <p class="eyebrow mb-2">Run Details</p>
+        <h1 class="h3 fw-bold mb-2" id="resultsHeading">Batch Results</h1>
+        <p class="text-dim mb-0 font-mono small" id="runMeta"></p>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-outline-robotik d-none" id="checkQtyBtn"><i class="bi bi-lightning-charge me-1"></i>Check Exact Quantities</button>
+        <button class="btn btn-accent" id="downloadCsvBtn"><i class="bi bi-download me-1"></i>Download CSV</button>
+        <a class="btn btn-outline-robotik" href="/batch-check.html" id="newRunLink"><i class="bi bi-arrow-left me-1"></i>New batch</a>
+      </div>
+    </div>
+
+    <section class="panel mb-4">
+      <div class="panel-body">
+        <div class="d-flex gap-3 flex-wrap" id="summaryStrip"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-body">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow mb-2">Ledger</p>
+            <h2>Full result set</h2>
+          </div>
+          <div class="d-flex gap-2 flex-wrap align-items-center">
+            <span class="status-chip" id="visibleCountChip"><i class="bi bi-eye"></i><span id="visibleCountText">0 showing</span></span>
+            <button type="button" class="btn btn-outline-robotik btn-sm-pill" id="skuFilterBtn"><i class="bi bi-list-check me-1"></i>Filter by SKU list</button>
+            <div class="input-icon-group" style="max-width:260px;">
+              <i class="bi bi-filter"></i>
+              <input type="text" class="form-control" id="filterInput" placeholder="Filter by SKU or title…">
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-robotik align-middle">
+            <thead>
+              <tr>
+                <th class="hide-sm">#</th>
+                <th>SKU</th>
+                <th>Product Info</th>
+                <th>Price</th>
+                <th>Stock Qty</th>
+                <th>Link</th>
+                <th class="hide-sm">Description</th>
+              </tr>
+            </thead>
+            <tbody id="resultsBody"></tbody>
+          </table>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mt-4 d-none" id="paginationBar">
+          <span class="text-faint small font-mono" id="pageInfo"></span>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-robotik btn-sm-pill" id="prevPageBtn"><i class="bi bi-chevron-left me-1"></i>Prev</button>
+            <button class="btn btn-outline-robotik btn-sm-pill" id="nextPageBtn">Next<i class="bi bi-chevron-right ms-1"></i></button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Empty / expired state -->
+  <div id="emptyView" class="d-none">
+    <section class="panel">
+      <div class="panel-body">
+        <div class="empty-note py-5">
+          <i class="bi bi-inbox"></i>
+          <p class="mb-3">No run found here — it may have expired from local storage (only the last 6 runs are kept), or you navigated here directly.</p>
+          <div class="d-flex gap-2 justify-content-center flex-wrap">
+            <a class="btn btn-accent" href="/batch-check.html"><i class="bi bi-play-fill me-1"></i>Run a new batch check</a>
+            <a class="btn btn-outline-robotik" href="/scrape-store.html"><i class="bi bi-radar me-1"></i>Scrape a store</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Filter by SKU list modal -->
+  <div class="modal fade" id="skuFilterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-robotik">
+        <div class="modal-header">
+          <h5 class="modal-title mb-0">Filter by SKU list</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-dim small mb-3">Paste a SKU list (one per line, like <code>my-skus.txt</code>) or upload a .txt file — the ledger will only show rows matching these SKUs.</p>
+
+          <label class="file-drop mb-3" id="skuFilterDrop">
+            <input type="file" id="skuFilterFileInput" accept=".txt" />
+            <i class="bi bi-cloud-arrow-up"></i>
+            <span><strong>Click to choose a .txt file</strong> — or drag one here</span>
+          </label>
+
+          <textarea class="form-control font-mono small" id="skuFilterTextarea" rows="8" placeholder="BHU438A&#10;BHU557A&#10;BHU5367A"></textarea>
+          <p class="text-faint small mt-2 mb-0" id="skuFilterCount">0 SKUs entered</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-robotik" id="skuFilterClearBtn">Clear filter</button>
+          <button type="button" class="btn btn-accent" id="skuFilterApplyBtn" data-bs-dismiss="modal">Apply filter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer text-center py-4 mt-4">
+  bhunes-sku-scraper &middot; results are read live from the storefront (or cache, when fresh)
+</footer>
+
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/product-modal.js"></script>
+<script src="/js/batch-results.js"></script>
+</body>
+</html>

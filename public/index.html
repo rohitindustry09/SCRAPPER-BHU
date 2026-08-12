@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bhunes SKU Console</title>
+<meta name="description" content="Robotics-grade stock &amp; price console for the Bhunes storefront." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+<link href="/css/theme.css" rel="stylesheet">
+</head>
+<body data-page="home">
+
+<nav class="navbar navbar-expand-lg navbar-robotik sticky-top py-3">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <span class="brand-mark"><i class="bi bi-cpu"></i></span>
+      <span>Bhunes SKU Console<small>Storefront Intelligence</small></span>
+    </a>
+    <button class="navbar-toggler border-0 text-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <i class="bi bi-list fs-3"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link robotik-link active" data-page="home" href="/"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="single" href="/single-lookup.html"><i class="bi bi-search"></i>Single Lookup</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="batch" href="/batch-check.html"><i class="bi bi-stack"></i>Batch Check</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="scrape" href="/scrape-store.html"><i class="bi bi-globe2"></i>Scrape Store</a></li>
+        <li class="nav-item ms-lg-3">
+          <span class="status-chip"><span class="status-dot pending" id="statusDot"></span><span id="statusLabel">Checking API…</span></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-5">
+
+  <!-- Hero -->
+  <section class="panel mb-5 position-relative">
+    <div class="hero-orb"></div>
+    <div class="panel-body py-5 position-relative">
+      <span class="hero-badge mb-4"><span class="status-dot online"></span>Live storefront data · cache-assisted</span>
+      <h1 class="display-5 fw-bold mt-3 mb-3" style="max-width:640px;">Precision stock &amp; pricing intel for the Bhunes catalog.</h1>
+      <p class="text-dim mb-4" style="max-width:560px; font-size:15px;">
+        Three dedicated instruments, one console: trace a single SKU, dispatch a full
+        batch sweep, or crawl an entire storefront's catalog — each with its own task
+        page and result ledger.
+      </p>
+      <div class="d-flex gap-3 flex-wrap">
+        <a href="/single-lookup.html" class="btn btn-accent"><i class="bi bi-search me-2"></i>Single Lookup</a>
+        <a href="/batch-check.html" class="btn btn-outline-robotik"><i class="bi bi-stack me-2"></i>Batch Check</a>
+        <a href="/scrape-store.html" class="btn btn-outline-robotik"><i class="bi bi-globe2 me-2"></i>Scrape Store</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Task tiles -->
+  <p class="eyebrow mb-3">Task Modules</p>
+  <div class="row g-4 mb-5">
+    <div class="col-md-4">
+      <a class="card-tile" href="/single-lookup.html">
+        <div class="tile-icon"><i class="bi bi-search"></i></div>
+        <h3>Single SKU Lookup</h3>
+        <p>Trace one SKU through cache → GraphQL → predictive search → HTML fallback, and inspect live price, stock and product URL. Every run is logged to a lookup ledger on the page.</p>
+        <span class="tile-cta">Open task <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a class="card-tile" href="/batch-check.html">
+        <div class="tile-icon"><i class="bi bi-stack"></i></div>
+        <h3>Batch Stock Check</h3>
+        <p>Paste, type, upload or load the default SKU list and sweep them all in one run. Results land in a sortable ledger with CSV export, right on the task page.</p>
+        <span class="tile-cta">Open task <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a class="card-tile" href="/scrape-store.html">
+        <div class="tile-icon"><i class="bi bi-globe2"></i></div>
+        <h3>Scrape Store Catalog</h3>
+        <p>Point it at any Shopify storefront's URL (default: bhunes.com) and pull every product — SKU, image, title, price, stock and link — no SKU list required.</p>
+        <span class="tile-cta">Open task <i class="bi bi-arrow-right"></i></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <section class="panel">
+    <div class="panel-body">
+      <p class="eyebrow mb-3">Lookup Pipeline</p>
+      <h2 class="mb-4">How a SKU gets resolved</h2>
+      <div class="row g-4">
+        <div class="col-6 col-md-3">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="font-mono text-accent fw-bold">01</span>
+            <span class="fw-semibold small">Cache</span>
+          </div>
+          <p class="text-dim small mb-0">Instant hit from the local 24h cache — no network call.</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="font-mono text-accent fw-bold">02</span>
+            <span class="fw-semibold small">Storefront GraphQL</span>
+          </div>
+          <p class="text-dim small mb-0">Shopify's official API — exact SKU match, fastest live path.</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="font-mono text-accent fw-bold">03</span>
+            <span class="fw-semibold small">Predictive Search</span>
+          </div>
+          <p class="text-dim small mb-0">Lightweight search-as-you-type endpoint, confirmed by SKU match.</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="font-mono text-accent fw-bold">04</span>
+            <span class="fw-semibold small">HTML Fallback</span>
+          </div>
+          <p class="text-dim small mb-0">Guaranteed last resort, with 429/5xx retry &amp; backoff.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer text-center py-4 mt-4">
+  bhunes-sku-scraper &middot; results are read live from the storefront (or cache, when fresh)
+</footer>
+
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/common.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Scrape Store · Bhunes SKU Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+<link href="/css/theme.css" rel="stylesheet">
+</head>
+<body data-page="scrape">
+
+<nav class="navbar navbar-expand-lg navbar-robotik sticky-top py-3">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <span class="brand-mark"><i class="bi bi-cpu"></i></span>
+      <span>Bhunes SKU Console<small>Storefront Intelligence</small></span>
+    </a>
+    <button class="navbar-toggler border-0 text-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <i class="bi bi-list fs-3"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="home" href="/"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="single" href="/single-lookup.html"><i class="bi bi-search"></i>Single Lookup</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="batch" href="/batch-check.html"><i class="bi bi-stack"></i>Batch Check</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="scrape" href="/scrape-store.html"><i class="bi bi-globe2"></i>Scrape Store</a></li>
+        <li class="nav-item ms-lg-3">
+          <span class="status-chip"><span class="status-dot pending" id="statusDot"></span><span id="statusLabel">Checking API…</span></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-5">
+
+  <nav class="breadcrumb-robotik"><a href="/">Dashboard</a><i class="bi bi-chevron-right"></i><span class="text-dim">Scrape Store</span></nav>
+
+  <div class="mb-4">
+    <p class="eyebrow mb-2">Task 03</p>
+    <h1 class="h3 fw-bold mb-2">Scrape Store Catalog</h1>
+    <p class="text-dim mb-0" style="max-width:640px;">Pull every product a Shopify storefront sells — SKU, image, title, price, stock and product link — straight from its public catalog listing. No SKU list needed; just point it at a store.</p>
+  </div>
+
+  <!-- Task form -->
+  <section class="panel mb-4">
+    <div class="panel-body">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow mb-2">Target</p>
+          <h2>Store website</h2>
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-end">
+        <div class="col-md-9">
+          <label class="form-label" for="storeUrlInput">Website URL</label>
+          <div class="input-icon-group">
+            <i class="bi bi-globe2"></i>
+            <input type="text" class="form-control" id="storeUrlInput" value="https://bhunes.com" spellcheck="false" autocomplete="off">
+          </div>
+          <p class="text-faint small mt-2 mb-0">Works on any public Shopify storefront — swap in a different site's URL any time. Reads the store's own public catalog listing, the same JSON its theme uses.</p>
+        </div>
+        <div class="col-md-3 d-grid">
+          <button class="btn btn-accent" id="startScrapeBtn"><i class="bi bi-radar me-1"></i>Start Scrape</button>
+        </div>
+      </div>
+
+      <div class="alert-robotik mt-3 d-none" id="errorBanner"></div>
+
+      <div class="mt-4 d-none" id="progressWrap">
+        <div class="d-flex justify-content-between small text-dim mb-2 font-mono">
+          <span id="progressLabel">Scanning catalog…</span>
+        </div>
+        <div class="progress-robotik"><div class="progress-bar-robotik progress-bar-indeterminate" id="progressBar"></div></div>
+        <p class="text-faint small mt-2 mb-0">Total catalog size isn't known until the last page — this walks the store's product listing page by page until it runs out.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ledger -->
+  <section class="panel">
+    <div class="panel-body">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow mb-2">Ledger</p>
+          <h2>Recent scrapes</h2>
+        </div>
+        <button class="btn-ghost-robotik" id="clearRunsBtn"><i class="bi bi-trash3 me-1"></i>Clear</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-robotik align-middle">
+          <thead>
+            <tr>
+              <th>When</th>
+              <th>Store</th>
+              <th>Products</th>
+              <th>SKUs found</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="runsBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-note d-none" id="runsEmpty"><i class="bi bi-inbox"></i>No scrapes yet — point it at a store above to populate the ledger.</div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer text-center py-4 mt-4">
+  bhunes-sku-scraper &middot; catalog data is read live from each store's own public product listing
+</footer>
+
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/scrape-store.js"></script>
+</body>
+</html>

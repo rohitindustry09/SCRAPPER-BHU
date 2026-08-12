@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Batch Check · Bhunes SKU Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+<link href="/css/theme.css" rel="stylesheet">
+</head>
+<body data-page="batch">
+
+<nav class="navbar navbar-expand-lg navbar-robotik sticky-top py-3">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <span class="brand-mark"><i class="bi bi-cpu"></i></span>
+      <span>Bhunes SKU Console<small>Storefront Intelligence</small></span>
+    </a>
+    <button class="navbar-toggler border-0 text-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <i class="bi bi-list fs-3"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="home" href="/"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="single" href="/single-lookup.html"><i class="bi bi-search"></i>Single Lookup</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="batch" href="/batch-check.html"><i class="bi bi-stack"></i>Batch Check</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="scrape" href="/scrape-store.html"><i class="bi bi-globe2"></i>Scrape Store</a></li>
+        <li class="nav-item ms-lg-3">
+          <span class="status-chip"><span class="status-dot pending" id="statusDot"></span><span id="statusLabel">Checking API…</span></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-5">
+
+  <nav class="breadcrumb-robotik"><a href="/">Dashboard</a><i class="bi bi-chevron-right"></i><span class="text-dim">Batch Check</span></nav>
+
+  <div class="mb-4">
+    <p class="eyebrow mb-2">Task 02</p>
+    <h1 class="h3 fw-bold mb-2">Batch Stock Check</h1>
+    <p class="text-dim mb-0" style="max-width:620px;">Sweep a whole SKU list in one run. Load it from the default file, paste it in, or upload a .txt — results land in the ledger below with CSV export.</p>
+  </div>
+
+  <!-- Task form -->
+  <section class="panel mb-4">
+    <div class="panel-body">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow mb-2">Target</p>
+          <h2>Storefront</h2>
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-end mb-4">
+        <div class="col-md-9">
+          <label class="form-label" for="siteInput">Website URL</label>
+          <div class="input-icon-group">
+            <i class="bi bi-globe2"></i>
+            <input type="text" class="form-control" id="siteInput" value="https://bhunes.com" spellcheck="false" autocomplete="off">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <span class="text-faint small" id="siteNote">SKU search works best on bhunes.com — other stores fall back to slower search layers.</span>
+        </div>
+      </div>
+
+      <div class="divider-glow mb-4"></div>
+
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow mb-2">Input</p>
+          <h2>SKU list</h2>
+        </div>
+        <button class="btn-ghost-robotik" id="loadDefaultBtn"><i class="bi bi-file-earmark-arrow-down me-1"></i>Use default list (my-skus.txt)</button>
+      </div>
+
+      <div class="seg-tabs mb-3">
+        <button class="active" data-mode="type" id="tabType">Type / paste</button>
+        <button data-mode="file" id="tabFile">Upload .txt file</button>
+      </div>
+
+      <div id="paneType">
+        <textarea class="form-control" id="skuTextarea" rows="7" placeholder="One SKU per line, e.g.&#10;BHU438A&#10;BHU557A&#10;BHU5367A"></textarea>
+      </div>
+
+      <div id="paneFile" style="display:none;">
+        <label class="file-drop" id="fileDrop">
+          <input type="file" id="fileInput" accept=".txt" />
+          <i class="bi bi-cloud-arrow-up"></i>
+          <span><strong>Click to choose a .txt file</strong> — or drag one here<br>one SKU per line</span>
+        </label>
+      </div>
+
+      <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
+        <span class="status-chip" id="countPill"><i class="bi bi-list-ol"></i>0 SKUs ready</span>
+      </div>
+
+      <details class="mt-3">
+        <summary class="text-faint small" style="cursor:pointer;">Advanced options</summary>
+        <div class="row g-3 mt-1" style="max-width:520px;">
+          <div class="col-4">
+            <label class="form-label" for="concurrencyInput">Concurrency</label>
+            <input type="text" class="form-control" id="concurrencyInput" value="3">
+          </div>
+          <div class="col-4">
+            <label class="form-label" for="delayInput">Delay (ms)</label>
+            <input type="text" class="form-control" id="delayInput" value="350">
+          </div>
+          <div class="col-4 d-flex align-items-end">
+            <div class="form-check pb-2">
+              <input class="form-check-input" type="checkbox" id="noCacheCheck">
+              <label class="form-check-label" for="noCacheCheck">Skip cache</label>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <div class="alert-robotik mt-3 d-none" id="errorBanner"></div>
+
+      <div class="d-flex gap-3 flex-wrap mt-4">
+        <button class="btn btn-accent" id="runBatchBtn"><i class="bi bi-play-fill me-1"></i>Run batch check</button>
+      </div>
+
+      <div class="mt-4 d-none" id="progressWrap">
+        <div class="d-flex justify-content-between small text-dim mb-2 font-mono">
+          <span id="progressLabel">Checking 0 / 0…</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-robotik"><div class="progress-bar-robotik" id="progressBar" style="width:0%"></div></div>
+        <p class="text-faint small mt-2 mb-0">Each SKU is checked individually and appears below the moment it lands, so a dropped request only costs that one SKU.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live results — streams in one row per SKU as each check completes -->
+  <section class="panel mb-4 d-none" id="livePanel">
+    <div class="panel-body">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow mb-2">Live</p>
+          <h2>Results as they land</h2>
+        </div>
+        <div class="d-flex gap-2 flex-wrap align-items-center">
+          <button type="button" class="btn btn-outline-robotik btn-sm-pill d-none" id="liveCsvBtn"><i class="bi bi-download me-1"></i>Download CSV</button>
+          <span class="status-chip"><span class="status-dot pending" id="liveDot"></span><span id="liveCountText">0 / 0 checked</span></span>
+          <a class="btn btn-accent btn-sm-pill d-none" id="liveViewAllBtn" href="#">View full results <i class="bi bi-arrow-right ms-1"></i></a>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 flex-wrap mb-4" id="liveStats"></div>
+
+      <div class="table-responsive">
+        <table class="table table-robotik align-middle">
+          <thead>
+            <tr>
+              <th class="hide-sm">#</th>
+              <th>SKU</th>
+              <th>Product Info</th>
+              <th>Price</th>
+              <th>Stock Qty</th>
+              <th>Link</th>
+            </tr>
+          </thead>
+          <tbody id="liveBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ledger -->
+  <section class="panel">
+    <div class="panel-body">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow mb-2">Ledger</p>
+          <h2>Recent runs</h2>
+        </div>
+        <button class="btn-ghost-robotik" id="clearRunsBtn"><i class="bi bi-trash3 me-1"></i>Clear</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-robotik align-middle">
+          <thead>
+            <tr>
+              <th>When</th>
+              <th>SKUs</th>
+              <th>Found</th>
+              <th>Not found</th>
+              <th>Errored</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="runsBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-note d-none" id="runsEmpty"><i class="bi bi-inbox"></i>No batch runs yet — run a check above to populate the ledger.</div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer text-center py-4 mt-4">
+  bhunes-sku-scraper &middot; results are read live from the storefront (or cache, when fresh)
+</footer>
+
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/product-modal.js"></script>
+<script src="/js/batch-check.js"></script>
+</body>
+</html>

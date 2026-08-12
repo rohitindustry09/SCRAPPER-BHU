@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Single Lookup · Bhunes SKU Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+<link href="/css/theme.css" rel="stylesheet">
+</head>
+<body data-page="single">
+
+<nav class="navbar navbar-expand-lg navbar-robotik sticky-top py-3">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <span class="brand-mark"><i class="bi bi-cpu"></i></span>
+      <span>Bhunes SKU Console<small>Storefront Intelligence</small></span>
+    </a>
+    <button class="navbar-toggler border-0 text-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <i class="bi bi-list fs-3"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="home" href="/"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="single" href="/single-lookup.html"><i class="bi bi-search"></i>Single Lookup</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="batch" href="/batch-check.html"><i class="bi bi-stack"></i>Batch Check</a></li>
+        <li class="nav-item"><a class="nav-link robotik-link" data-page="scrape" href="/scrape-store.html"><i class="bi bi-globe2"></i>Scrape Store</a></li>
+        <li class="nav-item ms-lg-3">
+          <span class="status-chip"><span class="status-dot pending" id="statusDot"></span><span id="statusLabel">Checking API…</span></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-5">
+
+  <nav class="breadcrumb-robotik"><a href="/">Dashboard</a><i class="bi bi-chevron-right"></i><span class="text-dim">Single Lookup</span></nav>
+
+  <div class="mb-4">
+    <p class="eyebrow mb-2">Task 01</p>
+    <h1 class="h3 fw-bold mb-2">Single SKU Lookup</h1>
+    <p class="text-dim mb-0" style="max-width:620px;">Trace one SKU through the resolver pipeline and inspect live price, stock and product URL. Every run is appended to the ledger below.</p>
+  </div>
+
+  <!-- Task form -->
+  <section class="panel mb-4">
+    <div class="panel-body">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow mb-2">Run</p>
+          <h2>Enter a SKU</h2>
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-end mb-3">
+        <div class="col-md-9">
+          <label class="form-label" for="siteInput">Storefront URL</label>
+          <div class="input-icon-group">
+            <i class="bi bi-globe2"></i>
+            <input type="text" class="form-control" id="siteInput" value="https://bhunes.com" spellcheck="false" autocomplete="off">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <span class="text-faint small">Works best on bhunes.com.</span>
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-end">
+        <div class="col-md-7">
+          <label class="form-label" for="quickSku">SKU code</label>
+          <div class="input-icon-group">
+            <i class="bi bi-upc-scan"></i>
+            <input type="text" class="form-control" id="quickSku" placeholder="e.g. BHU557A" autocomplete="off">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-check mt-2">
+            <input class="form-check-input" type="checkbox" id="noCacheCheck">
+            <label class="form-check-label" for="noCacheCheck">Skip cache</label>
+          </div>
+        </div>
+        <div class="col-md-2 d-grid">
+          <button class="btn btn-accent" id="quickSearchBtn"><i class="bi bi-lightning-charge me-1"></i>Search</button>
+        </div>
+      </div>
+
+      <div class="alert-robotik mt-3 d-none" id="errorBanner"></div>
+
+      <div id="quickResult"></div>
+    </div>
+  </section>
+
+  <!-- Ledger -->
+  <section class="panel">
+    <div class="panel-body">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow mb-2">Ledger</p>
+          <h2>Lookup history</h2>
+        </div>
+        <button class="btn-ghost-robotik" id="clearHistoryBtn"><i class="bi bi-trash3 me-1"></i>Clear</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-robotik align-middle">
+          <thead>
+            <tr>
+              <th>When</th>
+              <th>SKU</th>
+              <th>Result</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Source</th>
+              <th class="hide-sm">Link</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-note d-none" id="historyEmpty"><i class="bi bi-inbox"></i>No lookups yet — run a search above to populate the ledger.</div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer text-center py-4 mt-4">
+  bhunes-sku-scraper &middot; results are read live from the storefront (or cache, when fresh)
+</footer>
+
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/product-modal.js"></script>
+<script src="/js/single-lookup.js"></script>
+</body>
+</html>
